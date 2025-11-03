@@ -3,7 +3,7 @@
 # Variables
 HOST ?= localhost
 PORT ?= 8080
-APP_DIR ?= 
+APP_DIR ?=
 PROMETHEUS_LABELS ?=
 LOG_STYLE ?= json
 LOG_LEVEL ?= info
@@ -79,6 +79,18 @@ build-ui: install-ui ## Build ui
 	@echo "$(GREEN)Building ui...$(NC)"
 	@rm -rf ui/.next
 	@cd ui && npm run build && npm run copy-build
+
+build-darwin-arm64: build-ui ## Build bifrost-http binary for macOS arm64
+	@echo "$(GREEN)Building bifrost-http for macOS arm64...$(NC)"
+	@mkdir -p dist
+	@cd transports/bifrost-http && GOWORK=off GOOS=darwin GOARCH=arm64 go build -o ../../dist/bifrost-darwin-arm64 .
+	@echo "$(GREEN)Built: dist/bifrost-darwin-arm64$(NC)"
+
+build-linux-amd64: build-ui ## Build bifrost-http binary for Linux amd64
+	@echo "$(GREEN)Building bifrost-http for Linux amd64...$(NC)"
+	@mkdir -p dist
+	@cd transports/bifrost-http && GOWORK=off GOOS=linux GOARCH=amd64 go build -o ../../dist/bifrost-linux-amd64 .
+	@echo "$(GREEN)Built: dist/bifrost-linux-amd64$(NC)"
 
 build: build-ui ## Build bifrost-http binary
 	@echo "$(GREEN)Building bifrost-http...$(NC)"
